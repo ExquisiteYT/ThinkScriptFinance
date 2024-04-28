@@ -1,0 +1,55 @@
+# Define Inputs
+input symbol = "SPY"; # Adjust as needed for your ticker
+
+# Calculate only on the first bar of the session
+def isNewSession = GetDay() != GetDay()[1];
+def openPrice = if isNewSession then open(symbol) else openPrice[1];
+def closePrice = if isNewSession then close(symbol)[1] else closePrice[1];
+def IV = if isNewSession then HistoricalVolatility(252)[1] else IV[1];
+
+# Calculations
+def sqrtDays = Sqrt(1 / 365);
+def range = if isNewSession then closePrice * IV * sqrtDays else range[1];
+def IV1Low = openPrice - range;
+def IV1High = openPrice + range;
+def IV2Low = IV1Low - range;
+def IV2High = IV1High + range;
+def IV3Low = IV2Low - range;
+def IV3High = IV2High + range;
+
+# Plotting with solid lines
+plot IV1LowLine = IV1Low;
+IV1LowLine.SetDefaultColor(Color.RED);
+IV1LowLine.SetPaintingStrategy(PaintingStrategy.HORIZONTAL);
+IV1LowLine.SetLineWeight(2);
+AddLabel(yes, "IV1 Low: " + IV1Low, Color.RED);
+
+plot IV1HighLine = IV1High;
+IV1HighLine.SetDefaultColor(Color.GREEN);
+IV1HighLine.SetPaintingStrategy(PaintingStrategy.HORIZONTAL);
+IV1HighLine.SetLineWeight(2);
+AddLabel(yes, "IV1 High: " + IV1High, Color.GREEN);
+
+plot IV2LowLine = IV2Low;
+IV2LowLine.SetDefaultColor(Color.RED);
+IV2LowLine.SetPaintingStrategy(PaintingStrategy.HORIZONTAL);
+IV2LowLine.SetLineWeight(2);
+AddLabel(yes, "IV2 Low: " + IV2Low, Color.RED);
+
+plot IV2HighLine = IV2High;
+IV2HighLine.SetDefaultColor(Color.GREEN);
+IV2HighLine.SetPaintingStrategy(PaintingStrategy.HORIZONTAL);
+IV2HighLine.SetLineWeight(2);
+AddLabel(yes, "IV2 High: " + IV2High, Color.GREEN);
+
+plot IV3LowLine = IV3Low;
+IV3LowLine.SetDefaultColor(Color.RED);
+IV3LowLine.SetPaintingStrategy(PaintingStrategy.HORIZONTAL);
+IV3LowLine.SetLineWeight(2);
+AddLabel(yes, "IV3 Low: " + IV3Low, Color.RED);
+
+plot IV3HighLine = IV3High;
+IV3HighLine.SetDefaultColor(Color.GREEN);
+IV3HighLine.SetPaintingStrategy(PaintingStrategy.HORIZONTAL);
+IV3HighLine.SetLineWeight(2);
+AddLabel(yes, "IV3 High: " + IV3High, Color.GREEN);
